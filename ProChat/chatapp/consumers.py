@@ -37,20 +37,17 @@ class MySyncCon(SyncConsumer):
         print("==> disconnect", event)
         raise StopConsumer()
     
-
 class MyASyncCon(AsyncConsumer):
     async def websocket_connect(self, event):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        
-        self.channel_layer.group_add(self.room_name, self.channel_name)
-        print("===> connect", event)
-
+        print("==> connect", event)
+        await self.channel_layer.group_add(self.room_name, self.channel_name)
         await self.send({
             'type':'websocket.accept'
         })
 
     async def websocket_receive(self, event):
-        print("===> Receive as",event)
+        print("==> Receive",event)
         await self.channel_layer.group_send(
             self.room_name, 
             {
@@ -60,16 +57,15 @@ class MyASyncCon(AsyncConsumer):
         )
 
     async def chat_message(self, event):
-        print("====> channel send")
         await self.send({
             'type':'websocket.send',
             'text':event['message']
         })
-
     async def websocket_disconnect(self, event):
         await self.channel_layer.group_discard(
-            self.room_name,
+            self.room_name ,
             self.channel_name
         )
-        print("===> disconnect", event)
+        print("==> disconnect", event)
         raise StopConsumer()
+    

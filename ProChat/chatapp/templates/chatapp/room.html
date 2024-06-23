@@ -21,7 +21,7 @@
         const roomname = JSON.parse(document.getElementById('roomname').textContent)
         console.log(roomname)
         document.getElementById('inputfield').focus();
-        let ws = new WebSocket("ws://" + window.location.host + '/ws/sc/' + roomname + '/');
+        let ws = new WebSocket("ws://" + window.location.host + '/ws/ac/' + roomname + '/');
         ws.onopen = () => {
             console.log("Connection open");
         }
