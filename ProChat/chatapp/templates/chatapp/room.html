@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Room: {{roomname}}</h1>
+    <hr>
+
+    <textarea id="tarea" rows="5" cols="40"></textarea>
+    <br>
+    <input type="text" id="inputfield">
+    <br>
+    <button id="btn" onclick="sendbtn()">Send</button>
+    {{roomname | json_script:"roomname"}}
+    <script>
+        const roomname = JSON.parse(document.getElementById('roomname').textContent)
+        console.log(roomname)
+        document.getElementById('inputfield').focus();
+        let ws = new WebSocket("ws://" + window.location.host + '/ws/sc/' + roomname + '/');
+        ws.onopen = () => {
+            console.log("Connection open");
+        }
+
+        ws.onmessage = (event) => {
+            console.log("Message recived", event);
+            document.getElementById('tarea').value += event.data + '\n'
+        }
+
+        ws.onerror = () => {
+            console.log("connection Error occur");
+        }
+
+        function sendbtn() {
+            let e = document.getElementById('inputfield')
+            let d = e.value;
+            ws.send(d);
+            e.value = "";
+        }
+    </script>
+</body>
+
+</html>
